@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 2px;
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.titan {
+    background-color: gold;
+    width: 30px;
+    height: 30px;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.cannon {
+    background-color: black;
+    width: 30px;
+    height: 30px;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+
+.ricochet {
+    background-color: green;
+    width: 30px;
+    height: 30px;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.semi_ricochet {
+    background-color: blue;
+    width: 30px;
+    height: 10px;
+    transform: rotate(45deg);
+}
+
+.tank {
+    background-color: red;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
