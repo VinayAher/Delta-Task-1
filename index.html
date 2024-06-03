@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<title>Ricochet Rumble</title>
+<html>
+  <head>
+    <style>
+      #game-board {
+        width: 640px;
+        height: 640px;
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .tile {
+        width: 80px;
+        height: 80px;
+        border: 1px solid black;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .piece {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 14px;
+      }
+      .titan {
+        background-color: #8e44ad;
+      }
+      .tank {
+        background-color: #3498db;
+      }
+      .cannon {
+        background-color: #2ecc71;
+      }
+      .semi-ricochet {
+        background-image: url("Semi-Ricochet.jpg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        color: transparent; /* Hide the text */
+      }
+      .possible-move {
+        background-color: lightblue;
+        cursor: pointer;
+      }
+      .ricochet {
+        background-image: url("Ricochet.jpg"); /* Replace with the actual URL of the image */
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        color: transparent; /* Hide the text */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-board"></div>
+    <script>
+      const boardSize = 8;
+      const board = document.getElementById("game-board");
+      let selectedTile = null;
+
+      // Create the game board
+      for (let i = 0; i < boardSize * boardSize; i++) {
+        const tile = document.createElement("div");
+        tile.classList.add("tile");
+        board.appendChild(tile);
+      }
+
+      // Create game pieces
+      const pieces = [
+        { type: "titan", player: 1 },
+        { type: "tank", player: 1 },
+        { type: "cannon", player: 1 },
+        { type: "ricochet", player: 1 },
+        { type: "semi-ricochet", player: 1 },
+        { type: "titan", player: 2 },
+        { type: "tank", player: 2 },
+        { type: "cannon", player: 2 },
+        { type: "ricochet", player: 2 },
+        { type: "semi-ricochet", player: 2 },
+      ];
+
+      // Place pieces on the board
+      const extremeRanks = [0, boardSize - 1];
+      extremeRanks.forEach((rank, playerIndex) => {
+        pieces
+          .slice(playerIndex * 5, (playerIndex + 1) * 5)
+          .forEach((piece, index) => {
+            const tile = board.children[rank * boardSize + index];
+            const pieceElement = document.createElement("div");
+            pieceElement.classList.add("piece", piece.type);
+            pieceElement.textContent = piece.type;
+            tile.appendChild(pieceElement);
+            tile.dataset.player = piece.player;
+            tile.dataset.pieceType = piece.type;
+          });
+      });
+
+      // Add possible moves highlighting and piece movement on click
+      const tiles = document.querySelectorAll(".tile");
+      tiles.forEach((tile) => {
+        tile.addEventListener("click", () => {
+          // If a possible move is clicked, move the piece
+          if (tile.classList.contains("possible-move") && selectedTile) {
+            const pieceType = selectedTile.dataset.pieceType;
+            const player = selectedTile.dataset.player;
+
+            // Remove piece from original tile
+            selectedTile.innerHTML = "";
+            delete selectedTile.dataset.player;
+            delete selectedTile.dataset.pieceType;
+
+            // Move piece to new tile
+            const pieceElement = document.createElement("div");
+            pieceElement.classList.add("piece", pieceType);
+            pieceElement.textContent = pieceType;
+            tile.appendChild(pieceElement);
+            tile.dataset.player = player;
+            tile.dataset.pieceType = pieceType;
+
+            // Clear possible move highlights
+            const possibleMoves = document.querySelectorAll(".possible-move");
+            possibleMoves.forEach((move) => {
+              move.classList.remove("possible-move");
+            });
+
+            selectedTile = null;
+          }
+          // If a tile with a piece is clicked, show possible moves
+          else if (tile.dataset.player) {
+            selectedTile = tile;
+
+            // Clear previous possible move highlights
+            const possibleMoves = document.querySelectorAll(".possible-move");
+            possibleMoves.forEach((move) => {
+              move.classList.remove("possible-move");
+            });
+
+            const rect = tile.getBoundingClientRect();
+            const possibleMovesCoords = [
+              {
+                x: rect.left + window.scrollX,
+                y: rect.top - 80 + window.scrollY,
+              },
+              {
+                x: rect.left + window.scrollX,
+                y: rect.top + 80 + window.scrollY,
+              },
+              {
+                x: rect.left - 80 + window.scrollX,
+                y: rect.top + window.scrollY,
+              },
+              {
+                x: rect.left + 80 + window.scrollX,
+                y: rect.top + window.scrollY,
+              },
+            ];
+
+            possibleMovesCoords.forEach((move) => {
+              const targetTile = document.elementFromPoint(move.x, move.y);
+              if (
+                targetTile &&
+                targetTile.classList.contains("tile") &&
+                !targetTile.dataset.player
+              ) {
+                targetTile.classList.add("possible-move");
+              }
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
